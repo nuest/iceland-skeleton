@@ -69,8 +69,8 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
         <version.java>1.8</version.java>
-        <version.iceland>1.1.0</version.iceland>
-        <version.spring>4.1.6.RELEASE</version.spring>
+        <version.iceland>1.2.0-SNAPSHOT</version.iceland>
+        <version.spring>4.2.3.RELEASE</version.spring>
         <version.slf4j>1.7.12</version.slf4j>
         <version.log4j>2.3</version.log4j>
     </properties>
