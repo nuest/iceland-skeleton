@@ -31,6 +31,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,8 +47,6 @@ import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
 import org.n52.iceland.skeleton.request.DemoRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * TODO JavaDoc
@@ -83,9 +83,9 @@ public class DelegatingStringDecoder
     public AbstractServiceCommunicationObject decode(String string)
             throws OwsExceptionReport, UnsupportedDecoderInputException {
         try {
-            JAXBElement<Object> xmlObject = asXmlElement(string);
+            JAXBElement<?> xmlObject = asXmlElement(string);
             DecoderKey key = new XmlNamespaceDecoderKey(getDocumentNamespace(string), xmlObject.getDeclaredType());
-            Decoder<AbstractServiceCommunicationObject, JAXBElement> delegate = getDelegate(key);
+            Decoder<AbstractServiceCommunicationObject, JAXBElement<?>> delegate = getDelegate(key);
 
             log.trace("Delegated decoding to {} based on key {}", delegate, key);
             return delegate.decode(xmlObject);
@@ -96,15 +96,15 @@ public class DelegatingStringDecoder
         }
     }
 
-    private JAXBElement asXmlElement(String string) throws JAXBException {
+    private JAXBElement<?> asXmlElement(String string) throws JAXBException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         JAXBElement<Object> elem = unmarshaller.unmarshal(new StreamSource(new StringReader(string)), Object.class);
         return elem;
     }
 
-    private Decoder<AbstractServiceCommunicationObject, JAXBElement> getDelegate(DecoderKey decoderKey)
+    private Decoder<AbstractServiceCommunicationObject, JAXBElement<?>> getDelegate(DecoderKey decoderKey)
             throws NoDecoderForKeyException {
-        Decoder<AbstractServiceCommunicationObject, JAXBElement> decoder = this.decoderRepository.getDecoder(decoderKey);
+        Decoder<AbstractServiceCommunicationObject, JAXBElement<?>> decoder = this.decoderRepository.getDecoder(decoderKey);
         if (decoder == null) {
             throw new NoDecoderForKeyException(decoderKey);
         }
